@@ -24,8 +24,8 @@ namespace SimpleRestAPI.Repository
 
                 string[] arr = colorCode[i].Split(':');
                 ColorData cd = new ColorData();
-                cd.Hex = arr[0].Trim();
-                cd.Name = arr[1].Trim();
+                cd.Hex = arr[0];
+                cd.Name = arr[1];
                 int argb = int.Parse(cd.Hex, NumberStyles.HexNumber);
                 Color clr = Color.FromArgb(argb);
                 cd.R = clr.R;
