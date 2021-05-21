@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SimpleRestAPI.Models;
 using SimpleRestAPI.Repository;
@@ -14,8 +15,8 @@ namespace SimpleRestAPI.Controllers
     [Route("[controller]")]
     public class ColorController : ControllerBase
     {
-        [ProducesResponseType(200, Type = typeof(List<ColorData>))]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ColorData>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
         public async Task<IActionResult>  GetAllColorData()
         {
@@ -23,7 +24,9 @@ namespace SimpleRestAPI.Controllers
             ColorRepository cp = new ColorRepository();
             var data = await cp.GenerateModel();
             if (data == null)
+            {
                 return NotFound("No record");
+            }
             return Ok(data);
         }
     }
