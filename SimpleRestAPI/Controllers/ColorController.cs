@@ -14,12 +14,17 @@ namespace SimpleRestAPI.Controllers
     [Route("[controller]")]
     public class ColorController : ControllerBase
     {
+        [ProducesResponseType(200, Type = typeof(List<ColorData>))]
+        [ProducesResponseType(404)]
         [HttpGet]
-        public List<ColorData> GetAllColorData()
+        public async Task<IActionResult>  GetAllColorData()
         {
+
             ColorRepository cp = new ColorRepository();
-            List<ColorData> list = cp.GenerateModel();
-            return list;
+            var data = await cp.GenerateModel();
+            if (data == null)
+                return NotFound("No record");
+            return Ok(data);
         }
     }
 }

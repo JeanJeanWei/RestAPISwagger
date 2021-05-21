@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using SimpleRestAPI.Models;
 
 namespace SimpleRestAPI.Repository
@@ -15,9 +16,9 @@ namespace SimpleRestAPI.Repository
             
         }
 
-        public List<ColorData> GenerateModel()
+        public async Task<List<ColorData>> GenerateModel()
         {
-            string[] colorCode = File.ReadAllLines(txtPath);
+            string[] colorCode = await File.ReadAllLinesAsync(txtPath);
             List<ColorData> cdList = new List<ColorData>();
             for (int i = 0; i < colorCode.Length; i++)
             {
