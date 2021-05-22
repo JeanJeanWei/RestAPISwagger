@@ -8,5 +8,6 @@ namespace SimpleRestAPI.Models
         public int B { get; set; }
         public string Hex { get; set; }
         public string Name { get; set; }
+        public int Distance { get; set; }
     }
 }

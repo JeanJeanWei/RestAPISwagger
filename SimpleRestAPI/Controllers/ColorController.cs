@@ -18,12 +18,29 @@ namespace SimpleRestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ColorData>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
-        public async Task<IActionResult>  GetAllColorData()
+        [Route("AllColorData")]
+        public async Task<IActionResult>  AllColorData()
         {
 
             ColorRepository cp = new ColorRepository();
             var data = await cp.GenerateModel();
             if (data == null)
+            {
+                return NotFound("No record");
+            }
+            return Ok(data);
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ColorData))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet]
+        [Route("ClosestColorNameByHexColorData")]
+        public async Task<IActionResult> ClosestColorNameByHexColorData(string hex)
+        {
+
+            ColorRepository cp = new ColorRepository();
+            var data = await cp.GetClosestColorNameByHex(hex);
+            if (data == null || data.Name == null)
             {
                 return NotFound("No record");
             }

@@ -10,10 +10,21 @@ namespace SimpleRestAPI.Repository
 {
     public class ColorRepository
     {
-        static string txtPath = Path.Combine(Environment.CurrentDirectory, "Colors.txt");
+        string txtPath = Path.Combine(Environment.CurrentDirectory, "Colors.txt");
+        List<ColorData> Colors;
+
         public ColorRepository()
         {
             
+        }
+
+        public async Task<List<ColorData>> GetAllColorData()
+        {
+            if (Colors == null)
+            {
+                Colors = await GenerateModel();
+            }
+            return Colors;
         }
 
         public async Task<List<ColorData>> GenerateModel()
@@ -35,6 +46,60 @@ namespace SimpleRestAPI.Repository
                 cdList.Add(cd);
             }
             return cdList;
+        }
+
+        public async Task<ColorData> GetClosestColorNameByHex(string hex)
+        {   
+            if (Colors == null)
+            {
+                Colors = await GenerateModel();
+            }
+
+            int argb = int.Parse(hex.Replace("#", ""), NumberStyles.HexNumber);
+            Color a = Color.FromArgb(argb);
+            ColorData result = new ColorData()
+            {
+                Distance = int.MaxValue
+            };
+
+            for (int i = 0; i < Colors.Count; i++)
+            {
+                var b = Colors[i];
+                var d = Distance3D(a.R, a.G, a.B, b.R, b.G, b.B);
+                
+                if (d < result.Distance)
+                {
+                    result.Distance = d;
+                    result.Name = b.Name;
+                    result.Hex = b.Hex;
+                    result.R = b.R;
+                    result.G = b.G;
+                    result.B = b.G;
+                }
+            }
+            return result;
+        }
+
+        public int Distance3D(int x1, int y1, int z1, int x2, int y2, int z2)
+        {
+            //     __________________________________
+            //d = √ (x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2
+            //
+
+            //Our end result
+            int result;
+            //Take x2-x1, then square it
+            double part1 = Math.Pow((x2 - x1), 2);
+            //Take y2-y1, then sqaure it
+            double part2 = Math.Pow((y2 - y1), 2);
+            //Take z2-z1, then square it
+            double part3 = Math.Pow((z2 - z1), 2);
+            //Add both of the parts together
+            double underRadical = part1 + part2 + part3;
+            //Get the square root of the parts
+            result = (int)Math.Sqrt(underRadical);
+            //Return our result
+            return result;
         }
     }
 }

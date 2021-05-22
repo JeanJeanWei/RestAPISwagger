@@ -14,20 +14,16 @@ namespace UnitTests
         static string txtPath = Path.Combine(Environment.CurrentDirectory, "Colors.txt");
 
         [TestMethod]
-        public void TestMethod1()
+        public async void TestMethod1()
         {
             ColorRepository cp = new ColorRepository();
-            List<ColorData> list = cp.GenerateModel();
+            List<ColorData> list = await cp.GenerateModel();
         }
 
         [TestMethod]
         public void TestWriteToFile()
         {
 
-            //        string[] lines =
-            //        {
-            //    "First line", "Second line", "Third line"
-            //}
             string[] colorCode = File.ReadAllLines(txtPath);
             for (int i = 0; i < colorCode.Length; i++)
             {
