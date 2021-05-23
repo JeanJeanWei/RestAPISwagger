@@ -35,7 +35,7 @@ namespace SimpleRestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
         [Route("ClosestColorNameByHexColorData")]
-        public async Task<IActionResult> ClosestColorNameByHexColorData(string hex)
+        public async Task<IActionResult> ClosestColorNameByHex(string hex)
         {
 
             ColorRepository cp = new ColorRepository();
