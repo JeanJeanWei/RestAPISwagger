@@ -34,7 +34,7 @@ namespace SimpleRestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ColorData))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
-        [Route("ClosestColorNameByHexColorData")]
+        [Route("ClosestColorNameByHex")]
         public async Task<IActionResult> ClosestColorNameByHex(string hex)
         {
 
