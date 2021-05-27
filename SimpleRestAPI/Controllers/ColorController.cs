@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using SimpleRestAPI.Models;
 using SimpleRestAPI.Repository;
 
@@ -15,6 +17,11 @@ namespace SimpleRestAPI.Controllers
     [Route("[controller]")]
     public class ColorController : ControllerBase
     {
+        public ColorController(IOptions<EnvironmentSettings> options)
+        {
+            var env = options.Value.Environment;
+        }
+
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ColorData>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
@@ -23,7 +30,7 @@ namespace SimpleRestAPI.Controllers
         {
 
             ColorRepository cp = new ColorRepository();
-            var data = await cp.GenerateModel();
+            var data = await cp.AllColorData();
             if (data == null)
             {
                 return NotFound("No record");
@@ -39,7 +46,7 @@ namespace SimpleRestAPI.Controllers
         {
 
             ColorRepository cp = new ColorRepository();
-            var data = await cp.GetClosestColorNameByHex(hex);
+            var data = await cp.ClosestColorNameByHex(hex);
             if (data == null || data.Name == null)
             {
                 return NotFound("No record");

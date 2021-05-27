@@ -8,7 +8,7 @@ using SimpleRestAPI.Models;
 
 namespace SimpleRestAPI.Repository
 {
-    public class ColorRepository
+    public class ColorRepository : IRepository<Task<List<ColorData>>>
     {
         string txtPath = Path.Combine(Environment.CurrentDirectory, "Colors.txt");
         List<ColorData> Colors;
@@ -18,16 +18,7 @@ namespace SimpleRestAPI.Repository
             
         }
 
-        public async Task<List<ColorData>> GetAllColorData()
-        {
-            if (Colors == null)
-            {
-                Colors = await GenerateModel();
-            }
-            return Colors;
-        }
-
-        public async Task<List<ColorData>> GenerateModel()
+        public async Task<List<ColorData>> GetDataSource()
         {
             string[] colorCode = await File.ReadAllLinesAsync(txtPath);
             List<ColorData> cdList = new List<ColorData>();
@@ -48,11 +39,22 @@ namespace SimpleRestAPI.Repository
             return cdList;
         }
 
-        public async Task<ColorData> GetClosestColorNameByHex(string hex)
+        public async Task<List<ColorData>> AllColorData()
+        {
+            if (Colors == null)
+            {
+                Colors = await GetDataSource();
+            }
+            return Colors;
+        }
+
+        
+
+        public async Task<ColorData> ClosestColorNameByHex(string hex)
         {   
             if (Colors == null)
             {
-                Colors = await GenerateModel();
+                Colors = await GetDataSource();
             }
 
             int argb = int.Parse(hex.Replace("#", ""), NumberStyles.HexNumber);
@@ -101,5 +103,7 @@ namespace SimpleRestAPI.Repository
             //Return our result
             return result;
         }
+
+        
     }
 }

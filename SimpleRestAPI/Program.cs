@@ -35,6 +35,10 @@ namespace SimpleRestAPI
                     configurationRoot.GetSection(nameof(TransientFaultHandlingOptions))
                                      .Bind(options);
 
+                    EnvironmentSettings settings = new EnvironmentSettings();
+                    configurationRoot.GetSection(nameof(EnvironmentSettings))
+                                     .Bind(settings);
+
                     Console.WriteLine($"TransientFaultHandlingOptions.Enabled={options.Enabled}");
                     Console.WriteLine($"TransientFaultHandlingOptions.AutoRetryDelay={options.AutoRetryDelay}");
                 });

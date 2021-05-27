@@ -17,7 +17,7 @@ namespace UnitTests
         public async void TestMethod1()
         {
             ColorRepository cp = new ColorRepository();
-            List<ColorData> list = await cp.GenerateModel();
+            List<ColorData> list = await cp.GetDataSource();
         }
 
         [TestMethod]
