@@ -11,6 +11,8 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Repository\" />
+    <Folder Include="Repository\Color\" />
+    <Folder Include="Repository\Weather\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Repository\Colors.txt" />
