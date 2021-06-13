@@ -15,7 +15,6 @@ namespace SimpleRestAPI.Repository
 
         public ColorRepository()
         {
-            
         }
 
         public async Task<List<ColorData>> GetDataSource()

@@ -13,6 +13,7 @@
     <Folder Include="Repository\" />
     <Folder Include="Repository\Color\" />
     <Folder Include="Repository\Weather\" />
+    <Folder Include="Models\Weather\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Repository\Colors.txt" />
