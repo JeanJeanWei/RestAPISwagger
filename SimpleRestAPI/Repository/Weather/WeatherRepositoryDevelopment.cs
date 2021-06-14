@@ -14,6 +14,7 @@ namespace SimpleRestAPI.Repository.Weather
     {
         static string txtPath = Path.Combine(Environment.CurrentDirectory, "citylist.json");
         static string wUrl = "http://api.openweathermap.org/data/2.5/weather";
+        static string yourAppId = "use your appid";
         public WeatherRepositoryDevelopment()
         {
         }
@@ -23,7 +24,8 @@ namespace SimpleRestAPI.Repository.Weather
 
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("q", cityname);
-            para.Add("APPID", "input your APPID");
+            para.Add("units", "metric");
+            para.Add("APPID", yourAppId);
             var json = GetDataSource(wUrl, para);
             var data = JsonConvert.DeserializeObject<WeatherData.Root>(json);
             WeatherForecast result = new WeatherForecast()
@@ -34,12 +36,25 @@ namespace SimpleRestAPI.Repository.Weather
             };
             return result;
         }
-        //public string GetDataSource1()
-        //{
-        //    //q = London,uk & APPID = 
 
-            
-        //}
+        public async Task<WeatherForecast> SearchByCityNameAsync(string cityname)
+        {
+
+            Dictionary<string, string> para = new Dictionary<string, string>();
+            para.Add("q", cityname);
+            para.Add("units", "metric");
+            para.Add("APPID", yourAppId);
+            var json = await GetDataSourceAsync(wUrl, para);
+            var data = JsonConvert.DeserializeObject<WeatherData.Root>(json);
+            WeatherForecast result = new WeatherForecast()
+            {
+                Date = DateTime.Now,
+                Summary = data.name,
+                TemperatureC = (int)data.main.temp
+            };
+            return result;
+        }
+        
 
         public string GetDataSource(string url, Dictionary<string, string> parameters = null)
         {
@@ -67,7 +82,39 @@ namespace SimpleRestAPI.Repository.Weather
             Encoding enc = Encoding.GetEncoding("utf-8");
             StreamReader responseStream = new StreamReader(webresponse.GetResponseStream(), enc);
             var result = responseStream.ReadToEnd();
-            
+            webresponse.Close();
+
+            return result;
+        }
+
+        public async Task<string> GetDataSourceAsync(string url, Dictionary<string, string> parameters = null)
+        {
+
+            Uri uri = new Uri(url);
+            if (parameters != null && parameters.Count > 0)
+            {
+                var stringBuilder = new StringBuilder();
+                string str = "?";
+                foreach (string key in parameters.Keys)
+                {
+                    stringBuilder.Append(str +
+                        WebUtility.UrlEncode(key) +
+                         "=" + WebUtility.UrlEncode(parameters[key]));
+                    str = "&";
+                }
+
+                uri = new Uri(url + stringBuilder.ToString());
+            }
+
+            HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(uri);
+            webrequest.Method = "GET";
+            webrequest.ContentType = "application/x-www-form-urlencoded";
+            HttpWebResponse webresponse = (HttpWebResponse) await webrequest.GetResponseAsync();
+            Encoding enc = Encoding.GetEncoding("utf-8");
+            StreamReader responseStream = new StreamReader(webresponse.GetResponseStream(), enc);
+            var result = responseStream.ReadToEnd();
+            webresponse.Close();
+
             return result;
         }
 

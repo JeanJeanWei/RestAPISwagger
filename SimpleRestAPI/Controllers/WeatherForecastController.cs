@@ -41,5 +41,20 @@ namespace SimpleRestAPI.Controllers
             }
             return Ok(data);
         }
+
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WeatherForecast))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet]
+        [Route("SearchByCityNameAsync")]
+        public async Task<IActionResult> SearchByCityNameAsync(string name)
+        {
+            WeatherRepositoryDevelopment wp = new WeatherRepositoryDevelopment();
+            var data = await wp.SearchByCityNameAsync(name);
+            if (data == null)
+            {
+                return NotFound("No record");
+            }
+            return Ok(data);
+        }
     }
 }
