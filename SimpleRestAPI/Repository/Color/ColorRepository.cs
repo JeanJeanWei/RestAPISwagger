@@ -17,7 +17,7 @@ namespace SimpleRestAPI.Repository
         {
         }
 
-        public async Task<List<ColorData>> GetDataSource()
+        public async Task<List<ColorData>> GetSource()
         {
             string[] colorCode = await File.ReadAllLinesAsync(txtPath);
             List<ColorData> cdList = new List<ColorData>();
@@ -42,7 +42,7 @@ namespace SimpleRestAPI.Repository
         {
             if (Colors == null)
             {
-                Colors = await GetDataSource();
+                Colors = await GetSource();
             }
             return Colors;
         }
@@ -53,7 +53,7 @@ namespace SimpleRestAPI.Repository
         {   
             if (Colors == null)
             {
-                Colors = await GetDataSource();
+                Colors = await GetSource();
             }
 
             int argb = int.Parse(hex.Replace("#", ""), NumberStyles.HexNumber);

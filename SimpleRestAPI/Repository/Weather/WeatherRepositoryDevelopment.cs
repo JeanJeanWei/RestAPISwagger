@@ -14,7 +14,7 @@ namespace SimpleRestAPI.Repository.Weather
     {
         static string txtPath = Path.Combine(Environment.CurrentDirectory, "citylist.json");
         static string wUrl = "http://api.openweathermap.org/data/2.5/weather";
-        static string yourAppId = "use your appid";
+        static string yourAppId = "input your AppId";
         public WeatherRepositoryDevelopment()
         {
         }
@@ -28,12 +28,7 @@ namespace SimpleRestAPI.Repository.Weather
             para.Add("APPID", yourAppId);
             var json = GetDataSource(wUrl, para);
             var data = JsonConvert.DeserializeObject<WeatherData.Root>(json);
-            WeatherForecast result = new WeatherForecast()
-            {
-                Date = DateTime.Now,
-                Summary = data.name,
-                TemperatureC = (int)data.main.temp
-            };
+            WeatherForecast result = ProcessResult(data);
             return result;
         }
 
@@ -46,19 +41,29 @@ namespace SimpleRestAPI.Repository.Weather
             para.Add("APPID", yourAppId);
             var json = await GetDataSourceAsync(wUrl, para);
             var data = JsonConvert.DeserializeObject<WeatherData.Root>(json);
+            WeatherForecast result = ProcessResult(data);
+            return result;
+        }
+
+        private WeatherForecast ProcessResult(WeatherData.Root data)
+        {
             WeatherForecast result = new WeatherForecast()
             {
-                Date = DateTime.Now,
-                Summary = data.name,
-                TemperatureC = (int)data.main.temp
+                Date = UnixTimestampToDateTime(data.dt),
+                CityName = data.name,
+                TemperatureC = data.main.temp,
+                TemperatureMinC = data.main.temp_min,
+                TemperatureMaxC = data.main.temp_max,
+                TemperatureFeelsLikeC = data.main.feels_like,
+                CountryCode = data.sys.country,
+                Weather = data.weather[0]?.main,
+                WeatherDescription = data.weather[0]?.description
             };
             return result;
         }
-        
 
-        public string GetDataSource(string url, Dictionary<string, string> parameters = null)
+        private Uri GenerateURI(string url, Dictionary<string, string> parameters = null)
         {
-
             Uri uri = new Uri(url);
             if (parameters != null && parameters.Count > 0)
             {
@@ -74,6 +79,12 @@ namespace SimpleRestAPI.Repository.Weather
 
                 uri = new Uri(url + stringBuilder.ToString());
             }
+            return uri;
+        }
+
+        public string GetDataSource(string url, Dictionary<string, string> parameters = null)
+        {
+            Uri uri = GenerateURI(url, parameters);
 
             HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(uri);
             webrequest.Method = "GET";
@@ -89,22 +100,7 @@ namespace SimpleRestAPI.Repository.Weather
 
         public async Task<string> GetDataSourceAsync(string url, Dictionary<string, string> parameters = null)
         {
-
-            Uri uri = new Uri(url);
-            if (parameters != null && parameters.Count > 0)
-            {
-                var stringBuilder = new StringBuilder();
-                string str = "?";
-                foreach (string key in parameters.Keys)
-                {
-                    stringBuilder.Append(str +
-                        WebUtility.UrlEncode(key) +
-                         "=" + WebUtility.UrlEncode(parameters[key]));
-                    str = "&";
-                }
-
-                uri = new Uri(url + stringBuilder.ToString());
-            }
+            Uri uri = GenerateURI(url, parameters);
 
             HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(uri);
             webrequest.Method = "GET";
@@ -136,9 +132,16 @@ namespace SimpleRestAPI.Repository.Weather
             return cityList;
         }
 
-        public string GetDataSource()
+        public string GetSource()
         {
             throw new NotImplementedException();
+        }
+
+        public DateTime UnixTimestampToDateTime(double unixTime)
+        {
+            DateTime unixStart = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long unixTimeStampInTicks = (long)(unixTime * TimeSpan.TicksPerSecond);
+            return new DateTime(unixStart.Ticks + unixTimeStampInTicks, DateTimeKind.Utc);
         }
     }
 }
